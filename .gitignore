@@ -2,3 +2,5 @@
 /dist
 
 server.log
+drizzle.config.ts
+.env
