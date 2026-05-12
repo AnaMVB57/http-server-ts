@@ -10,8 +10,7 @@ export function handleValidateChirp(req: Request, res: Response) {
   }
   if (body.length > 140) {
     res.header("Content-Type", "application/json");
-    res.status(400).send(JSON.stringify({ error: "Chirp is too long" }));
-    return;
+    throw new Error("Chirp is too long" );
   }
 
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
