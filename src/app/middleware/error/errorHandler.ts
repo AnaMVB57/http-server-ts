@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { AppError } from "./errors.js";
 
 export function errorHandler(
   err: Error,
@@ -6,5 +7,14 @@ export function errorHandler(
   res: Response,
   next: NextFunction,
 ) {
-  res.status(500).json({ error: "Something went wrong on our end" });
+  if (err instanceof AppError) {
+
+    res.status(err.statusCode).send(JSON.stringify({ error: err.message }));
+  } else {
+
+    console.log(err);
+    res
+      .status(500)
+      .send(JSON.stringify({ error: "Something went wrong on our end" }));
+  }
 }

@@ -25,6 +25,7 @@ app.get("/admin/metrics", handlerMetrics);
 app.get("/admin/reset", handlerReset);
 app.post("/api/validate_chirp", handleValidateChirp);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {

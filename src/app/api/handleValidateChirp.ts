@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { BadRequestError } from "../middleware/error/errors.js";
 
 export function handleValidateChirp(req: Request, res: Response) {
   const { body } = req.body;
@@ -10,7 +11,7 @@ export function handleValidateChirp(req: Request, res: Response) {
   }
   if (body.length > 140) {
     res.header("Content-Type", "application/json");
-    throw new Error("Chirp is too long" );
+    throw new BadRequestError("Chirp is too long. Max length is 140" );
   }
 
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
