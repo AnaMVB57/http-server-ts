@@ -8,9 +8,14 @@ import {
   getAllChirps,
   getChirpById,
 } from "../../../db/queries/chirps.js";
+import { getBearerToken, validateJWT } from "../auth/auth.js";
+import { config } from "../../../config.js";
 
 export async function handleCreateChirps(req: Request, res: Response) {
-  const { body, userId } = req.body as { body: string; userId: string };
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.api.jwtSecret);
+
+  const { body } = req.body as { body: string };
 
   if (!body || typeof body !== "string") {
     throw new BadRequestError("Chirp body was not provided.");
@@ -48,7 +53,7 @@ export async function handleGetAllChirps(req: Request, res: Response) {
 }
 
 export async function handleGetChirpById(req: Request, res: Response) {
-  const { chirpId } = req.params as { chirpId: string};
+  const { chirpId } = req.params as { chirpId: string };
   try {
     const chirp = await getChirpById(chirpId);
 

@@ -13,6 +13,7 @@ function envOrThrow(key: string): string {
 type APIConfig = {
   fileserverHits: number;
   platform: string;
+  jwtSecret: string;
 };
 
 type DBConfig = {
@@ -26,7 +27,11 @@ type Config = {
 };
 
 export const config: Config = {
-  api: { fileserverHits: 0, platform: envOrThrow("PLATFORM") },
+  api: {
+    fileserverHits: 0,
+    platform: envOrThrow("PLATFORM"),
+    jwtSecret: envOrThrow("TOKEN_SECRET"),
+  },
   db: {
     url: envOrThrow("DB_URL"),
     migrationConfig: {
