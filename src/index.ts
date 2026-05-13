@@ -7,7 +7,7 @@ import {
 } from "./app/middleware/middlewareMetricsInc.js";
 import { errorHandler } from "./app/middleware/error/errorHandler.js";
 import { handleCreateUsers, handlerReset } from "./app/api/users/users.js";
-import { handleCreateChirps } from "./app/api/chirps/chirps.js";
+import { handleCreateChirps, handleGetAllChirps, handleGetChirpById } from "./app/api/chirps/chirps.js";
 
 export let app = express();
 const PORT = 8080;
@@ -25,7 +25,12 @@ app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
 
 app.post("/api/users", handleCreateUsers);
+
 app.post("/api/chirps", handleCreateChirps);
+app.get("/api/chirps", handleGetAllChirps);
+
+app.get("/api/chirps/:chirpId", handleGetChirpById);
+
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
 app.use(errorHandler);
