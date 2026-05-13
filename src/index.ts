@@ -3,11 +3,11 @@ import express from "express";
 import { middlewareLogResponse } from "./app/middleware/middlewareLogResponses.js";
 import {
   handlerMetrics,
-  handlerReset,
   middlewareMetricsInc,
 } from "./app/middleware/middlewareMetricsInc.js";
 import { handleValidateChirp } from "./app/api/handleValidateChirp.js";
 import { errorHandler } from "./app/middleware/error/errorHandler.js";
+import { handleCreateUsers, handlerReset } from "./app/api/users/users.js";
 
 export let app = express();
 const PORT = 8080;
@@ -22,7 +22,9 @@ app.use(express.json());
 
 app.get("/api/healthz", handlerReadiness);
 app.get("/admin/metrics", handlerMetrics);
-app.get("/admin/reset", handlerReset);
+app.post("/admin/reset", handlerReset);
+
+app.post("/api/users", handleCreateUsers);
 app.post("/api/validate_chirp", handleValidateChirp);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 

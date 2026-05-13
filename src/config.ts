@@ -12,6 +12,7 @@ function envOrThrow(key: string): string {
 
 type APIConfig = {
   fileserverHits: number;
+  platform: string;
 };
 
 type DBConfig = {
@@ -25,7 +26,7 @@ type Config = {
 };
 
 export const config: Config = {
-  api: { fileserverHits: 0 },
+  api: { fileserverHits: 0, platform: envOrThrow("PLATFORM") },
   db: {
     url: envOrThrow("DB_URL"),
     migrationConfig: {

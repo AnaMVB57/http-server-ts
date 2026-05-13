@@ -7,5 +7,14 @@ export async function createUser(user: NewUser) {
     .values(user)
     .onConflictDoNothing()
     .returning();
+
+  if (!result) {
+    throw new Error("User already exists");
+  }
+
   return result;
+}
+
+export async function deleteAllUsers() {
+  await db.delete(users);
 }
