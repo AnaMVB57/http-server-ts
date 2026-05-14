@@ -63,8 +63,15 @@ export async function handleCreateChirps(req: Request, res: Response) {
 
 export async function handleGetAllChirps(req: Request, res: Response) {
   try {
-    const chirps = await getAllChirps();
-    res.header("Content-Type", "application/json");
+    const authorIdQuery = req.query.authorId;
+    let authorId: string | undefined;
+
+    if (typeof authorIdQuery === "string") {
+      authorId = authorIdQuery;
+    }
+
+    const chirps = await getAllChirps(authorId);
+
     res.status(200).json(chirps);
   } catch (error) {
     throw new NotFoundError("Couldn't load chirps.");
