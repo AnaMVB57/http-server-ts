@@ -10,6 +10,7 @@ import { handleCreateUsers, handlerReset, handleUpdateUsers } from "./app/api/us
 import { handleCreateChirps, handleDeleteChirpById, handleGetAllChirps, handleGetChirpById } from "./app/api/chirps/chirps.js";
 import { handleLogin } from "./app/api/login/handleLogin.js";
 import { handleRefresh, handleRevoke } from "./db/queries/refresh_tokens/refreshTokens.js";
+import { handlePolkaWebhook } from "./app/api/webhooks/handlePolkaWebhook.js";
 
 export let app = express();
 const PORT = 8080;
@@ -39,6 +40,8 @@ app.get("/api/chirps", handleGetAllChirps);
 app.get("/api/chirps/:chirpId", handleGetChirpById);
 
 app.delete("/api/chirps/:chirpId", handleDeleteChirpById);
+
+app.post("/api/polka/webhooks", handlePolkaWebhook);
 
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 

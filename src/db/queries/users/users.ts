@@ -48,3 +48,17 @@ export async function updateUser(userId: string, email: string, hashedPassword: 
 
     return result;
 }
+
+export async function upgradeChirpyRed(userId: string) {
+    const [result] = await db
+        .update(users)
+        .set({ isChirpyRed: true })
+        .where(eq(users.id, userId))
+        .returning();
+
+    if (!result) {
+        throw new Error("User not found");
+    }
+
+    return result;
+}
