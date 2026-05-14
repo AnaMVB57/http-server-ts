@@ -60,3 +60,13 @@ export function makeRefreshToken() {
   const refreshToken = crypto.randomBytes(32).toString("hex");
   return refreshToken;
 }
+
+export function getAPIKey(req: Request){
+  const apiKeyHeader = req.get("Authorization");
+
+  if (!apiKeyHeader || !apiKeyHeader.startsWith("ApiKey ")) {
+    throw new UnauthorizedError("Token was not found in the header");
+  }
+
+  return apiKeyHeader.replace("ApiKey ", "").trim();
+}

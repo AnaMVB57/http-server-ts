@@ -6,32 +6,39 @@ import { config } from "../../../config.js";
 import { createRefreshToken } from "../../../db/queries/refresh_tokens/refreshTokens.js";
 
 export async function handleLogin(req: Request, res: Response) {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await getUserByEmail(email);
-  const passwordMatch = await checkPassword(password, user.hashedPassword);
+    const user = await getUserByEmail(email);
 
-  if (!passwordMatch) {
-    throw new UnauthorizedError("Incorrect email or password");
-  }
+    if (!user) {
+      throw new UnauthorizedError("Incorrect email or password");
+    }
 
-  //Generate Access Token
-  const accessToken = makeJWT(user.id, 3600, config.api.jwtSecret);
+    const passwordMatch = await checkPassword(password, user.hashedPassword);
 
-  //Generate Refresh Token
-  const refreshTokenStr = makeRefreshToken();
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 60);
+    if (!passwordMatch) {
+      throw new UnauthorizedError("Incorrect email or password");
+    }
 
-  await createRefreshToken(refreshTokenStr, user.id, expiresAt);
+    //Generate Access Token
+    const accessToken = makeJWT(user.id, 3600, config.api.jwtSecret);
 
-  const { hashedPassword: _, ...userResponse } = user;
+    //Generate Refresh Token
+    const refreshTokenStr = makeRefreshToken();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 60);
 
-  res
-    .status(200)
-    .json({
+    await createRefreshToken(refreshTokenStr, user.id, expiresAt);
+
+    const { hashedPassword: _, ...userResponse } = user;
+
+    res.status(200).json({
       ...userResponse,
       token: accessToken,
       refreshToken: refreshTokenStr,
     });
+  } catch (error) {
+    res.status(500).json({ error: "Something went wrong during login" });
+  }
 }
