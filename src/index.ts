@@ -6,7 +6,7 @@ import {
   middlewareMetricsInc,
 } from "./app/middleware/middlewareMetricsInc.js";
 import { errorHandler } from "./app/middleware/error/errorHandler.js";
-import { handleCreateUsers, handlerReset } from "./app/api/users/users.js";
+import { handleCreateUsers, handlerReset, handleUpdateUsers } from "./app/api/users/users.js";
 import { handleCreateChirps, handleGetAllChirps, handleGetChirpById } from "./app/api/chirps/chirps.js";
 import { handleLogin } from "./app/api/login/handleLogin.js";
 import { handleRefresh, handleRevoke } from "./db/queries/refresh_tokens/refreshTokens.js";
@@ -27,6 +27,7 @@ app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
 
 app.post("/api/users", handleCreateUsers);
+app.put("/api/users", handleUpdateUsers);
 
 app.post("/api/login", handleLogin);
 app.post("/api/refresh", handleRefresh);

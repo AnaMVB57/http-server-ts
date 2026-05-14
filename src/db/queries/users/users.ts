@@ -34,3 +34,17 @@ export async function getUserByEmail(email: string) {
 export async function deleteAllUsers() {
   await db.delete(users);
 }
+
+export async function updateUser(userId: string, email: string, hashedPassword: string) {
+    const [result] = await db
+        .update(users)
+        .set({ email, hashedPassword, updatedAt: new Date() })
+        .where(eq(users.id, userId))
+        .returning();
+
+    if (!result) {
+        throw new Error("User not found");
+    }
+
+    return result;
+}
