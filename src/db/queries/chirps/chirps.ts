@@ -35,3 +35,13 @@ export async function getChirpById(chirpId: string) {
 
   return result[0];
 }
+
+export async function deleteChirpById(chirpId: string) {
+  const result = await db.delete(chirps).where(eq(chirps.id, chirpId)).returning();
+
+  if (!result) {
+    throw new Error(`Failed to delete chirp with id ${chirpId}`);
+  }
+
+  return result[0];
+}

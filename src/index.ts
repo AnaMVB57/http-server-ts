@@ -7,7 +7,7 @@ import {
 } from "./app/middleware/middlewareMetricsInc.js";
 import { errorHandler } from "./app/middleware/error/errorHandler.js";
 import { handleCreateUsers, handlerReset, handleUpdateUsers } from "./app/api/users/users.js";
-import { handleCreateChirps, handleGetAllChirps, handleGetChirpById } from "./app/api/chirps/chirps.js";
+import { handleCreateChirps, handleDeleteChirpById, handleGetAllChirps, handleGetChirpById } from "./app/api/chirps/chirps.js";
 import { handleLogin } from "./app/api/login/handleLogin.js";
 import { handleRefresh, handleRevoke } from "./db/queries/refresh_tokens/refreshTokens.js";
 
@@ -37,6 +37,8 @@ app.post("/api/chirps", handleCreateChirps);
 app.get("/api/chirps", handleGetAllChirps);
 
 app.get("/api/chirps/:chirpId", handleGetChirpById);
+
+app.delete("/api/chirps/:chirpId", handleDeleteChirpById);
 
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 

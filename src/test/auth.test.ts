@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { checkPassword, getBearerToken, hashPassword, makeJWT, validateJWT } from "../api/auth/auth.js";
 import type { Request } from "express";
+import { checkPassword, getBearerToken, hashPassword, makeJWT, validateJWT } from "../app/api/auth/auth.js";
 
 const secret = "test-secret";
 const wrongSecret = "wrong-secret";
