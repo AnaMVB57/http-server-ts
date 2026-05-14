@@ -2,27 +2,43 @@ import { Request, Response } from "express";
 import {
   BadRequestError,
   NotFoundError,
+  UnauthorizedError,
 } from "../../middleware/error/errors.js";
 import {
   createChirps,
   getAllChirps,
   getChirpById,
-} from "../../../db/queries/chirps.js";
+} from "../../../db/queries/chirps/chirps.js";
 import { getBearerToken, validateJWT } from "../auth/auth.js";
 import { config } from "../../../config.js";
 
 export async function handleCreateChirps(req: Request, res: Response) {
-  const token = getBearerToken(req);
-  const userId = validateJWT(token, config.api.jwtSecret);
+  let token = "";
+  let userId: string | null = null;
+
+  try {
+    token = getBearerToken(req);
+    userId = validateJWT(token, config.api.jwtSecret);
+
+    if (!userId) {
+      res.status(401).json({ error: "User not authorized." });
+      return;
+    }
+  } catch (error) {
+    res.status(401).json({ error: "User not authorized." });
+    return;
+  }
 
   const { body } = req.body as { body: string };
 
   if (!body || typeof body !== "string") {
-    throw new BadRequestError("Chirp body was not provided.");
+    res.status(400).json({ error: "Chirp body was not provided." });
+    return;
   }
 
   if (body.length > 140) {
-    throw new BadRequestError("Chirp is too long. Max length is 140");
+    res.status(400).json({ error: "Chirp is too long. Max length is 140" });
+    return;
   }
 
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
@@ -36,10 +52,12 @@ export async function handleCreateChirps(req: Request, res: Response) {
 
   const cleanedBody = words.join(" ");
 
-  const chirp = await createChirps({ body: cleanedBody, userId });
-
-  res.header("Content-Type", "application/json");
-  res.status(201).send(JSON.stringify(chirp));
+  try {
+    const chirp = await createChirps({ body: cleanedBody, userId });
+    res.status(201).json(chirp);
+  } catch (error) {
+    res.status(500).json({ error: "Something went wrong on our end" });
+  }
 }
 
 export async function handleGetAllChirps(req: Request, res: Response) {

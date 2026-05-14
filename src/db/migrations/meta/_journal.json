@@ -22,6 +22,13 @@
       "when": 1778692979070,
       "tag": "0002_stiff_ares",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1778718137716,
+      "tag": "0003_strong_beyonder",
+      "breakpoints": true
     }
   ]
 }

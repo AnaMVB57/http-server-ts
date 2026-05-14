@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createUser, deleteAllUsers } from "../../../db/queries/users.js";
+import { createUser, deleteAllUsers } from "../../../db/queries/users/users.js";
 import { config } from "../../../config.js";
 import { ForbiddenError } from "../../middleware/error/errors.js";
 import { hashPassword } from "../auth/auth.js";

@@ -9,6 +9,7 @@ import { errorHandler } from "./app/middleware/error/errorHandler.js";
 import { handleCreateUsers, handlerReset } from "./app/api/users/users.js";
 import { handleCreateChirps, handleGetAllChirps, handleGetChirpById } from "./app/api/chirps/chirps.js";
 import { handleLogin } from "./app/api/login/handleLogin.js";
+import { handleRefresh, handleRevoke } from "./db/queries/refresh_tokens/refreshTokens.js";
 
 export let app = express();
 const PORT = 8080;
@@ -26,7 +27,10 @@ app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
 
 app.post("/api/users", handleCreateUsers);
+
 app.post("/api/login", handleLogin);
+app.post("/api/refresh", handleRefresh);
+app.post("/api/revoke", handleRevoke);
 
 app.post("/api/chirps", handleCreateChirps);
 app.get("/api/chirps", handleGetAllChirps);

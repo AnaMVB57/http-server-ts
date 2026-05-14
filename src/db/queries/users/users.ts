@@ -1,6 +1,6 @@
-import { NotFoundError } from "../../app/middleware/error/errors.js";
-import { db } from "../index.js";
-import { NewUser, users } from "../schema.js";
+import { NotFoundError } from "../../../app/middleware/error/errors.js";
+import { db } from "../../index.js";
+import { NewUser, users } from "../../schema.js";
 import { eq } from "drizzle-orm";
 
 export async function createUser(user: NewUser) {

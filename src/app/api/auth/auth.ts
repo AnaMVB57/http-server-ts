@@ -1,10 +1,8 @@
 import * as argon2 from "argon2";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import {
-  NotFoundError,
-  UnauthorizedError,
-} from "../../middleware/error/errors.js";
+import { UnauthorizedError } from "../../middleware/error/errors.js";
 import { Request } from "express";
+import crypto from "crypto";
 
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 
@@ -33,10 +31,19 @@ export function makeJWT(
   return jwt.sign(token, secret);
 }
 
-export function validateJWT(tokenString: string, secret: string): string {
-  const decodedToken = jwt.verify(tokenString, secret) as payload;
-  if (!decodedToken.sub) throw new UnauthorizedError("Invalid token");
-  return decodedToken.sub;
+export function validateJWT(
+  tokenString: string,
+  secret: string,
+): string | null {
+  try {
+    const decodedToken = jwt.verify(tokenString, secret) as payload;
+    if (!decodedToken.sub) {
+      return null;
+    }
+    return decodedToken.sub;
+  } catch (error) {
+    throw null;
+  }
 }
 
 export function getBearerToken(req: Request): string {
@@ -47,4 +54,9 @@ export function getBearerToken(req: Request): string {
   }
 
   return authHeader.replace("Bearer ", "").trim();
+}
+
+export function makeRefreshToken() {
+  const refreshToken = crypto.randomBytes(32).toString("hex");
+  return refreshToken;
 }

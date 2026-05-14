@@ -1,40 +1,37 @@
 import { Request, Response } from "express";
-import { getUserByEmail } from "../../../db/queries/users.js";
+import { getUserByEmail } from "../../../db/queries/users/users.js";
 import { UnauthorizedError } from "../../middleware/error/errors.js";
-import { checkPassword, makeJWT } from "../auth/auth.js";
+import { checkPassword, makeJWT, makeRefreshToken } from "../auth/auth.js";
 import { config } from "../../../config.js";
+import { createRefreshToken } from "../../../db/queries/refresh_tokens/refreshTokens.js";
 
 export async function handleLogin(req: Request, res: Response) {
-  const { email, password, expiresInSeconds } = req.body as {
-    email: string;
-    password: string;
-    expiresInSeconds: number;
-  };
+  const { email, password } = req.body;
 
-  if (!email || !password) {
-    throw new UnauthorizedError("incorrect email or password");
+  const user = await getUserByEmail(email);
+  const passwordMatch = await checkPassword(password, user.hashedPassword);
+
+  if (!passwordMatch) {
+    throw new UnauthorizedError("Incorrect email or password");
   }
 
-  try {
-    const user = await getUserByEmail(email);
-    const passwordMatch = await checkPassword(password, user.hashedPassword);
+  //Generate Access Token
+  const accessToken = makeJWT(user.id, 3600, config.api.jwtSecret);
 
-    if (!passwordMatch) {
-      throw new UnauthorizedError("incorrect email or password");
-    }
+  //Generate Refresh Token
+  const refreshTokenStr = makeRefreshToken();
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 60);
 
-    const oneHour = 3600;
-    const expiry =
-      !expiresInSeconds || expiresInSeconds > oneHour
-        ? oneHour
-        : expiresInSeconds;
+  await createRefreshToken(refreshTokenStr, user.id, expiresAt);
 
-    const token = makeJWT(user.id, expiry, config.api.jwtSecret);
+  const { hashedPassword: _, ...userResponse } = user;
 
-    const { hashedPassword: _, ...userResponse } = user;
-    res.header("Content-Type", "application/json");
-    res.status(200).send(JSON.stringify({ ...userResponse, token }));
-  } catch (error) {
-    throw new UnauthorizedError("incorrect email or password");
-  }
+  res
+    .status(200)
+    .json({
+      ...userResponse,
+      token: accessToken,
+      refreshToken: refreshTokenStr,
+    });
 }
