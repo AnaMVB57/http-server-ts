@@ -65,12 +65,24 @@ export async function handleGetAllChirps(req: Request, res: Response) {
   try {
     const authorIdQuery = req.query.authorId;
     let authorId: string | undefined;
+    const sort = req.query.sort as string | undefined;
 
     if (typeof authorIdQuery === "string") {
       authorId = authorIdQuery;
     }
 
     const chirps = await getAllChirps(authorId);
+
+    chirps.sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime();
+      const timeB = new Date(b.createdAt).getTime();
+
+      if (sort === "desc") {
+        return timeB - timeA;
+      }
+
+      return timeA - timeB;
+    });
 
     res.status(200).json(chirps);
   } catch (error) {
